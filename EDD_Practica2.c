@@ -13,26 +13,6 @@ double performancecounter_diff(LARGE_INTEGER *a, LARGE_INTEGER *b)
   return (double)(a->QuadPart - b->QuadPart) / (double)freq.QuadPart;
 }
 
-typedef struct _nodo {
-   int valor;
-   struct _nodo *siguiente;
-} tipoNodo;
-
-typedef tipoNodo *pNodo;
-typedef tipoNodo *Lista;
-
-/* Funciones con listas: */
-void Insertar(Lista *l, int v);
-void Borrar(Lista *l, int v);
-int primerDato(Lista lista);
-int ultimoDato(Lista lista);
-//pNodo buscarDato(Lista *lista, int index);
-//void quicksort(Lista *lista, int ini, int fin);
-int ListaVacia(Lista l);
-
-void BorrarLista(Lista *);
-void MostrarLista(Lista l);
-void ordBurbuja(Lista lista);
 /******************************EMPIEZA AVL**************************/
 
 // An AVL tree node
@@ -260,272 +240,217 @@ int main()
 {
 
 	FILE *fichero = NULL;
-	char *nombreArchivo = "ejemplo.txt";
+	char nombreArchivo[500];
 	char lectura[80];
 	int lec;
+	int ejeX[500];
+	double ejeY[500];
 	
+	int ejeXA[500];
+	double ejeYA[500];
+	
+	int ejeXB[500];
+	double ejeYB[500];
+	
+	int ejeXM[500];
+	double ejeYM[500];
+	
+	
+	int index = 0;
 	LARGE_INTEGER t_ini, t_fin;
 	double secs;
-	struct node *root = NULL;
-	int n = 0;
-	QueryPerformanceCounter(&t_ini);
-
-	int endoffile = 0;
+	int whatToDo = 1;
+	do{
+		printf("/*********************************/\n");
+		struct node *root = NULL;
+		int n = 0;
+		puts("Ingrese direccion del archivo: ");
+		scanf("%s", &nombreArchivo);
+		QueryPerformanceCounter(&t_ini);
 	
-	
-	fichero = fopen(nombreArchivo, "r");
-	if(fichero == NULL)return -1;
-	Lista lista = NULL;
-	Lista lista2 = NULL;
-	//fscanf(fichero, " %[^\n]", &lectura);
-	//printf("Lectura: %s\n", lectura);
-	/*printf("La lectura es:\n\n");
-	fscanf(fichero,"%d-",&lec);
-	Insertar(&lista, lec);
-	printf("La primera linea es: %d\n", lec);
-	fscanf(fichero,"%d-",&lec);
-	Insertar(&lista, lec);
-	printf("La segunda linea es: %d\n", lec);
-	fscanf(fichero, " %[^\n]", &lectura);*/
-	endoffile = fscanf(fichero,"%d-",&lec);
-	
-	while(endoffile != EOF){
-		//printf("%s\n", lectura);
-		//fscanf(fichero,"%d-",&lec);
-		//Insertar(&lista, lec);
-		//Insertar(&lista2, lec);
-		n = n + 1;
-		root = insert(root, lec);
+		int endoffile = 0;
+		
+		
+		fichero = fopen(nombreArchivo, "r");
+		if(fichero == NULL)return -1;
 		endoffile = fscanf(fichero,"%d-",&lec);
-	}
+		
+		while(endoffile != EOF){
+			n = n + 1;
+			root = insert(root, lec);
+			endoffile = fscanf(fichero,"%d-",&lec);
+		}
+		
+		
+		fclose(fichero);	
 	
-	
-	fclose(fichero);	
-
-	
-	//MostrarLista(lista);
-	QueryPerformanceCounter(&t_fin);
-	
-	secs = performancecounter_diff(&t_fin, &t_ini);
-	printf("Tiempo de ingreso al AVL:\n");
-	printf("% 10lf segundos\n", secs);
-	//BorrarLista(&lista);
-	printf("\n");
-	QueryPerformanceCounter(&t_ini);
-  		getInordenTiempo(root);
-  	QueryPerformanceCounter(&t_fin);
-  	secs = performancecounter_diff(&t_fin, &t_ini);
-		printf("\nMetodo de preOrden AVL tardo:\n");
+		
+		QueryPerformanceCounter(&t_fin);
+		
+		secs = performancecounter_diff(&t_fin, &t_ini);
+		ejeX[index] = n;
+		ejeY[index] = secs;
+		//index++;
+		printf("Tiempo de ingreso al AVL:\n");
 		printf("% 10lf segundos\n", secs);
-	
-	printf("\n");	
-	//MostrarLista(lista);
-	
-	int arrayBubble[n], i, contador, arrayQuick[n];
-	fichero = fopen(nombreArchivo, "r");
-	if(fichero == NULL)return -1;
-	contador = 0;
-	endoffile = fscanf(fichero,"%d-",&lec);
-	while(endoffile != EOF){
-		arrayBubble[contador] = lec;
-		arrayQuick[contador] = lec;
-		contador = contador + 1;
+		printf("\n");
+		QueryPerformanceCounter(&t_ini);
+	  		getInordenTiempo(root);
+	  	QueryPerformanceCounter(&t_fin);
+	  	secs = performancecounter_diff(&t_fin, &t_ini);
+	  	ejeXA[index] = n;
+		ejeYA[index] = secs;
+		//index++;
+			printf("\nMetodo de preOrden AVL tardo:\n");
+			printf("% 10lf segundos\n", secs);
+		
+		int arrayBubble[n], i, contador, arrayQuick[n];
+		fichero = fopen(nombreArchivo, "r");
+		if(fichero == NULL)return -1;
+		contador = 0;
 		endoffile = fscanf(fichero,"%d-",&lec);
-	}
-	fclose(fichero);
-  	
-	  
-	QueryPerformanceCounter(&t_ini);
-  		//ordBurbuja(lista);
-  		bubbleSort(arrayBubble, n);
-	QueryPerformanceCounter(&t_fin);
-	secs = performancecounter_diff(&t_fin, &t_ini);
-		printf("Metodo burbuja tardo:\n");
-		printf("% 10lf segundos\n", secs);
-  		//MostrarLista(lista);
-  	QueryPerformanceCounter(&t_ini);
-  		partition(arrayQuick, 0, (n - 1));
-	QueryPerformanceCounter(&t_fin);
-	secs = performancecounter_diff(&t_fin, &t_ini);
-		printf("Metodo Quicksort tardo:\n");
-		printf("% 10lf segundos\n", secs);
-  	
-	printf("Elementos del quicksort:\n");
-	for (i = 0; i < n; i++) {
-		printf("%d ", arrayQuick[i]);
-	}
-
-	printf("\nLista de numeros ordenados por el bubble sort:\n");
-	for (i = 0; i < n; i++) {
-		printf("%d ", arrayBubble[i]);
-	}
-	
-	printf("\nEl recorrido inorden es: \n", n);
-	inOrder(root); 
-	
-	/****************GRAFICAR*****************/
-	// Open a pipe to gnuplot
-	/*FILE *gnuplotPipe = popen("C:\\Program Files\\gnuplot\\bin\\pgnuplot -persist","w");
-	// If gnuplot is found
-	if (gnuplotPipe) {
-	  // using fprintf on the gnuplotPipe, we can directly issue commands in gnuplot
-	  fprintf(gnuplotPipe, "set style data lines\n");
-	  fprintf(gnuplotPipe, "cd 'C:\\Program Files\\gnuplot\\bin'\n");
-	  // assuming your data file is placed in the gnuplot bin directory
-	  fprintf(gnuplotPipe, "plot \"datos.dat\" using 1:2\n");
-	  fflush(gnuplotPipe);
-	  fprintf(stderr,"Press enter to continue...");
-	  fflush(stderr);
-	  getchar();
-	  // exit gnuplot
-	  fprintf(gnuplotPipe,"exit \n");
-	  pclose(gnuplotPipe);
-	}*/
-
-	/******************FIN*******************/ 
+		while(endoffile != EOF){
+			arrayBubble[contador] = lec;
+			arrayQuick[contador] = lec;
+			contador = contador + 1;
+			endoffile = fscanf(fichero,"%d-",&lec);
+		}
+		fclose(fichero);
 	  	
-  	system("PAUSE");
+		  
+		QueryPerformanceCounter(&t_ini);
+	  		bubbleSort(arrayBubble, n);
+		QueryPerformanceCounter(&t_fin);
+		secs = performancecounter_diff(&t_fin, &t_ini);
+		ejeXB[index] = n;
+		ejeYB[index] = secs;
+		//index++;
+			printf("Metodo burbuja tardo:\n");
+			printf("% 10lf segundos\n", secs);
+	  	printf("\n");
+	  	QueryPerformanceCounter(&t_ini);
+	  		partition(arrayQuick, 0, (n - 1));
+		QueryPerformanceCounter(&t_fin);
+		secs = performancecounter_diff(&t_fin, &t_ini);
+		ejeXM[index] = n;
+		ejeYM[index] = secs;
+		index++;
+			printf("Metodo Mergesort tardo:\n");
+			printf("% 10lf segundos\n", secs);
+	  	printf("\n");
+		printf("Elementos del quicksort:\n");
+		for (i = 0; i < n; i++) {
+			printf("%d ", arrayQuick[i]);
+		}
+	
+		printf("\nLista de numeros ordenados por el bubble sort:\n");
+		for (i = 0; i < n; i++) {
+			printf("%d ", arrayBubble[i]);
+		}
+		
+		printf("\nEl recorrido inorden es: \n", n);
+		inOrder(root); 
+		printf("\n");
+		printf("Que desea hacer?");
+		scanf(" %d", &whatToDo);
+	}while(whatToDo != 0);
+	printf("/*********************************/\n");
+	FILE *archivo;
+	archivo = fopen("Archivo.txt","w");
+	fprintf(archivo,"0		0.0\n");
+	FILE *archivoA;
+	archivoA = fopen("ArchivoA.txt","w");
+	fprintf(archivoA,"0		0.0\n");
+	FILE *archivoB;
+	archivoB = fopen("ArchivoB.txt","w");
+	fprintf(archivoB,"0		0.0\n");
+	FILE *archivoM;
+	archivoM = fopen("ArchivoM.txt","w");
+	fprintf(archivoM,"0		0.0\n");
+	int j = 0;
+	for(j = 0; j < index;j++)
+	{
+		printf("Los valores de X: %d y los valores de Y: %f\n",ejeX[j],ejeY[j]);
+		fprintf(archivo,"%d		%f\n",ejeX[j],ejeY[j]);
+	}
+	for(j = 0; j < index;j++)
+	{
+		printf("Los valores de X: %d y los valores de Y: %f\n",ejeXA[j],ejeYA[j]);
+		fprintf(archivoA,"%d		%f\n",ejeXA[j],ejeYA[j]);
+	}
+	for(j = 0; j < index;j++)
+	{
+		printf("Los valores de X: %d y los valores de Y: %f\n",ejeXB[j],ejeYB[j]);
+		fprintf(archivoB,"%d		%f\n",ejeXB[j],ejeYB[j]);
+	}
+	for(j = 0; j < index;j++)
+	{
+		printf("Los valores de X: %d y los valores de Y: %f\n",ejeXM[j],ejeYM[j]);
+		fprintf(archivoM,"%d		%f\n",ejeXM[j],ejeYM[j]);
+	}
+	fclose(archivo);
+	fclose(archivoA);
+	fclose(archivoB);
+	fclose(archivoM);
+	/****************GRAFICAR*****************/
+	FILE *gnuplotPipe = popen("gnuplot -persist", "w");
+		if (gnuplotPipe) {
+			fprintf(gnuplotPipe, "set style data lines\n");
+			fprintf(gnuplotPipe, "set title 'Grafica de Insercion AVL'\n");
+			fprintf(gnuplotPipe, "plot [:][:0.005] 'Archivo.txt' title 'Caso 1'\n");
+			fflush(gnuplotPipe);
+			//fflush(stderr);
+			getchar();
+			// exit gnuplot
+			fprintf(gnuplotPipe, "exit \n");
+			pclose(gnuplotPipe);
+		}
+
+	FILE *gnuplotPipeA = popen("gnuplot -persist", "w");
+		if (gnuplotPipeA) {
+			fprintf(gnuplotPipeA, "set style data lines\n");
+			fprintf(gnuplotPipeA, "set title 'Grafica de ORDENAMIENTO AVL'\n");
+			fprintf(gnuplotPipeA, "plot [:][:0.000005] 'ArchivoA.txt' title 'Caso 2'\n");
+			fflush(gnuplotPipeA);
+			//fflush(stderr);
+			getchar();
+			// exit gnuplot
+			fprintf(gnuplotPipeA, "exit \n");
+			pclose(gnuplotPipeA);
+		}
+		
+		
+	FILE *gnuplotPipeB = popen("gnuplot -persist", "w");
+		if (gnuplotPipeB) {
+			fprintf(gnuplotPipeB, "set style data lines\n");
+			fprintf(gnuplotPipeB, "set title 'Grafica de ORDENAMIENTO BURBUJA'\n");
+			fprintf(gnuplotPipeB, "plot [:][:0.000008] 'ArchivoB.txt' title 'Caso 3'\n");
+			fflush(gnuplotPipeB);
+			//fflush(stderr);
+			getchar();
+			// exit gnuplot
+			fprintf(gnuplotPipeB, "exit \n");
+			pclose(gnuplotPipeB);
+		}	
+	
+	
+	FILE *gnuplotPipeM = popen("gnuplot -persist", "w");
+		if (gnuplotPipeM) {
+			fprintf(gnuplotPipeM, "set style data lines\n");
+			fprintf(gnuplotPipeM, "set title 'Grafica de Merge Sort'\n");
+			fprintf(gnuplotPipeM, "plot [:][:0.000008] 'ArchivoM.txt' title 'Caso 4'\n");
+			fflush(gnuplotPipeM);
+			//fflush(stderr);
+			getchar();
+			// exit gnuplot
+			fprintf(gnuplotPipeM, "exit \n");
+			pclose(gnuplotPipeM);
+		}
+			
+	/******************FIN*******************/ 
 	return 0;
 }
 
-void Insertar(Lista *lista, int v)
-{
-   pNodo nuevo, anterior;
-
-   /* Crear un nodo nuevo */
-   nuevo = (pNodo)malloc(sizeof(tipoNodo));
-   nuevo->valor = v;
-   nuevo->siguiente = *lista;
-   *lista = nuevo;
-}
-
-void ordBurbuja(Lista lista)
-{
-	Lista actual, siguiente;
-	int t;
-	
-	actual = lista;
-	
-	while(actual->siguiente != NULL) 
-	{
-		siguiente = actual->siguiente;
-		
-		while(siguiente != NULL)
-		{
-			if(actual->valor > siguiente->valor)
-			{
-				t = siguiente->valor;
-				siguiente->valor = actual->valor;
-				actual->valor = t;
-			}
-			siguiente = siguiente->siguiente;
-		}
-		actual = actual->siguiente;
-		siguiente = actual->siguiente;
-	}
-}
-
-void Borrar(Lista *lista, int v)
-{
-   pNodo anterior, nodo;
-   
-   nodo = *lista;
-   anterior = NULL;
-   while(nodo && nodo->valor < v) {
-      anterior = nodo; 
-      nodo = nodo->siguiente;
-   }
-   if(!nodo || nodo->valor != v) return;
-   else { /* Borrar el nodo */
-      if(!anterior) /* Primer elemento */
-         *lista = nodo->siguiente;
-      else  /* un elemento cualquiera */
-         anterior->siguiente = nodo->siguiente;
-      free(nodo);
-   }   
-}
-
-int ListaVacia(Lista lista)
-{
-   return (lista == NULL);
-}
-
-void BorrarLista(Lista *lista)
-{
-   pNodo nodo;
-
-   while(*lista) {
-      nodo = *lista;
-      *lista = nodo->siguiente;
-      free(nodo);
-   }
-}
-
-void MostrarLista(Lista lista)
-{
-   pNodo nodo = lista;
-
-   if(ListaVacia(lista)) printf("Lista vacía\n");
-   else {
-      while(nodo) {
-         printf("%d -> ", nodo->valor);
-         nodo = nodo->siguiente;
-     }
-     printf("\n");
-   }
-}
-
-int primerDato(Lista lista){
-	pNodo actual = lista;
-	return actual->valor;
-}
-int ultimoDato(Lista lista){
-	pNodo actual = lista;
-	int a = -1;
-	while(actual)
-	{
-		a++;
-		actual = actual->siguiente;			
-	}
-	return a;
-}
-/*pNodo buscarDato(Lista *lista, int index)
-{
-	pNodo actual = *lista;
-	int a = 0;
-	while(actual)
-	{
-		if(a == index)
-			return actual;
-		a++;
-		actual = actual->siguiente;
-	}
-	return NULL;
-}*/
-
-/*void quicksort(Lista *lista, int ini, int fin)
-{
-	int t, i = ini, h = fin, mid;
-	if(fin > ini)
-	{
-		mid = buscarDato(lista,(ini+fin)/2)->valor;
-		while(i < h)
-		{
-			while((i<fin)&&(buscarDato(lista,i)->valor<mid))i++;
-			while((h>ini)&&(buscarDato(lista,i)->valor>mid))h--;
-			if(i<=h)
-			{
-				t = buscarDato(lista,i)->valor;
-				buscarDato(lista,i)->valor = buscarDato(lista,h)->valor;
-				buscarDato(lista,h)->valor = t;
-				i++;
-				h--;
-			}
-		}
-		if(ini<h) quicksort(lista, ini,h);
-		if(i<fin) quicksort(lista,i,fin);
-	}
-}*/
 
 
 
